@@ -1,12 +1,20 @@
 import { of } from 'rxjs';
 import { Post } from '../../models/post';
 import { PostsComponent } from './posts.component';
+import { TestBed } from '@angular/core/testing';
+import { PostService } from '../../services/Post/post.service';
 
+class mockPostService {
+  getPosts() {}
+  deletePosts(post: Post) {
+    return of(true);
+  }
+}
 
 describe('PostsComponent', () => {
   let POSTS: Post[];
   let component: PostsComponent;
-  let mockPostService: any;
+  let postService: any;
 
   beforeEach(() => {
     POSTS = [
@@ -26,17 +34,27 @@ describe('PostsComponent', () => {
         title: 'title3',
       },
     ];
+   // mockPostService = jasmine.createSpyObj(['getPosts', 'deletePosts']);
+    TestBed.configureTestingModule({
+      providers: [
+        PostsComponent,
+        {
+          provide: PostService,
+          useClass: mockPostService,
+        },
+      ],
+    });
 
-    mockPostService = jasmine.createSpyObj(['getPosts', 'deletePosts']);
+    component = TestBed.inject(PostsComponent);
+    postService = TestBed.inject(PostService);
 
-    component = new PostsComponent(mockPostService);
   });
 
   //Delete method eka test tika 3 scenarrios
 
   describe('delete', () => {
     beforeEach(() => {
-      mockPostService.deletePosts.and.returnValue(of(true));
+      // postService.deletePosts.and.returnValue(of(true));
       component.posts = POSTS;
     });
 
@@ -53,8 +71,9 @@ describe('PostsComponent', () => {
     });
 
     it('should call delete method in post Service one time', () => {
+      spyOn(postService, 'deletePosts').and.returnValue(of(true));
       component.deletePosts(POSTS[1]);
-      expect(mockPostService.deletePosts).toHaveBeenCalledTimes(1);
+      expect(postService.deletePosts).toHaveBeenCalledTimes(1);
     });
   });
 });
