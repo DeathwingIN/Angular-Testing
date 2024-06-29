@@ -1,12 +1,14 @@
 import { Component } from '@angular/core';
 import { Post } from '../../models/post';
 import { PostService } from '../../services/Post/post.service';
+import { PostComponent } from '../post/post.component';
+import { NgFor } from '@angular/common';
 
 
 @Component({
   selector: 'app-posts',
   standalone: true,
-  imports: [],
+  imports: [PostComponent,NgFor],
   templateUrl: './posts.component.html',
   styleUrl: './posts.component.scss',
 })
