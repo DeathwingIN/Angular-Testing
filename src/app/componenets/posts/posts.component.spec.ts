@@ -1,7 +1,7 @@
 import { of } from 'rxjs';
 import { Post } from '../../models/post';
 import { PostsComponent } from './posts.component';
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PostService } from '../../services/Post/post.service';
 
 class mockPostService {
@@ -14,7 +14,8 @@ class mockPostService {
 describe('PostsComponent', () => {
   let POSTS: Post[];
   let component: PostsComponent;
-  let postService: any;
+  let mockPostService: any;
+  let fixture: ComponentFixture<PostsComponent>;
 
   beforeEach(() => {
     POSTS = [
@@ -34,27 +35,39 @@ describe('PostsComponent', () => {
         title: 'title3',
       },
     ];
-   // mockPostService = jasmine.createSpyObj(['getPosts', 'deletePosts']);
+    mockPostService = jasmine.createSpyObj(['getPosts', 'deletePosts']);
+
     TestBed.configureTestingModule({
+      imports: [PostsComponent],
+
       providers: [
-        PostsComponent,
         {
           provide: PostService,
-          useClass: mockPostService,
+          useValue: mockPostService,
         },
       ],
     });
 
-    component = TestBed.inject(PostsComponent);
-    postService = TestBed.inject(PostService);
-
+    fixture = TestBed.createComponent(PostsComponent);
+    component = fixture.componentInstance;
   });
+
+
+  it('Should set posts from the service directly', () => {
+    mockPostService.getPosts.and.returnValue(of(POSTS));
+    component.ngOnInit(); //fixture.detectChanges(); can use 
+    
+    expect(component.posts.length).toBe(3);
+  
+  })
+
+
 
   //Delete method eka test tika 3 scenarrios
 
   describe('delete', () => {
     beforeEach(() => {
-      // postService.deletePosts.and.returnValue(of(true));
+      mockPostService.deletePosts.and.returnValue(of(true));
       component.posts = POSTS;
     });
 
@@ -71,9 +84,8 @@ describe('PostsComponent', () => {
     });
 
     it('should call delete method in post Service one time', () => {
-      spyOn(postService, 'deletePosts').and.returnValue(of(true));
       component.deletePosts(POSTS[1]);
-      expect(postService.deletePosts).toHaveBeenCalledTimes(1);
+      expect(mockPostService.deletePosts).toHaveBeenCalledTimes(1);
     });
   });
 });
