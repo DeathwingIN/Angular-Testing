@@ -7,7 +7,6 @@ export class LoggerService {
   messages: string[] = [];
 
   constructor() {
-
     debugger;
     //logic here
   }
@@ -15,5 +14,9 @@ export class LoggerService {
   log(message: string) {
     debugger;
     this.messages.push(message);
+  }
+
+  clear() {
+    this.messages = [];
   }
 }

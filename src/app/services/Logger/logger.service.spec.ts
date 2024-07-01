@@ -36,7 +36,7 @@ describe('LoggerService', () => {
     expect(service.messages.length).toBe(1);
   });
 
-  /* it('should clear all the messages when clear is called', () => {
+  it('should clear all the messages when clear is called', () => {
     //arrange
     //const service = new LoggerService();
     service.log('message');
@@ -46,5 +46,5 @@ describe('LoggerService', () => {
 
     //assert
     expect(service.messages.length).toBe(0);
-  }); */
+  });
 });
