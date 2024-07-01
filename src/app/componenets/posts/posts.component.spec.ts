@@ -7,6 +7,7 @@ import { Component, Input } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { PostComponent } from '../post/post.component';
 
 class mockPostService {
   getPosts() {}
@@ -20,14 +21,6 @@ describe('PostsComponent', () => {
   let component: PostsComponent;
   let mockPostService: any;
   let fixture: ComponentFixture<PostsComponent>;
-
-  @Component({
-    selector: 'app-post',
-    template: '<div></div>',
-  })
-  class FakePostComponent {
-    @Input() post!: Post;
-  }
 
   beforeEach(() => {
     POSTS = [
@@ -52,13 +45,13 @@ describe('PostsComponent', () => {
         paramMap: {
           get: () => 'test', // Mock any route parameters as needed
         },
-      },}
+      },
+    };
 
     mockPostService = jasmine.createSpyObj(['getPosts', 'deletePosts']);
-    
 
     TestBed.configureTestingModule({
-      imports: [PostsComponent,RouterTestingModule],
+      imports: [PostsComponent, RouterTestingModule, PostComponent],
 
       providers: [
         {
@@ -66,15 +59,20 @@ describe('PostsComponent', () => {
           useValue: mockPostService,
         },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
-
       ],
     });
 
-
-    
-
     fixture = TestBed.createComponent(PostsComponent);
     component = fixture.componentInstance;
+  });
+
+  it('should create exact same number of Post Component with Posts', () => {
+    mockPostService.getPosts.and.returnValue(of(POSTS));
+    fixture.detectChanges();
+    const postComponentDEs = fixture.debugElement.queryAll(
+      By.directive(PostComponent)
+    );
+    expect(postComponentDEs.length).toBe(POSTS.length);
   });
 
   it('Should set posts from the service directly', () => {
@@ -85,7 +83,7 @@ describe('PostsComponent', () => {
 
   it('Should create one post child element for each post', () => {
     mockPostService.getPosts.and.returnValue(of(POSTS));
-    fixture.detectChanges(); 
+    fixture.detectChanges();
     const debugElement = fixture.debugElement;
     const postsElment = debugElement.queryAll(By.css('.posts'));
     expect(postsElment.length).toBe(POSTS.length);
