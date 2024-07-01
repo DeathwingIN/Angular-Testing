@@ -75,6 +75,22 @@ describe('PostsComponent', () => {
     expect(postComponentDEs.length).toBe(POSTS.length);
   });
 
+  it('Should check whether exact post is sending to PostComponent', () => {
+    mockPostService.getPosts.and.returnValue(of(POSTS));
+    fixture.detectChanges();
+    const postComponentDEs = fixture.debugElement.queryAll(
+      By.directive(PostComponent)
+    );
+
+    for (let i = 0; i < postComponentDEs.length; i++) {
+      let PostComponentInstance = postComponentDEs[i]
+        .componentInstance as PostComponent;
+      expect(PostComponentInstance.post.title).toEqual(POSTS[i].title);
+    }
+
+    
+  });
+
   it('Should set posts from the service directly', () => {
     mockPostService.getPosts.and.returnValue(of(POSTS));
     component.ngOnInit(); //fixture.detectChanges(); can use
