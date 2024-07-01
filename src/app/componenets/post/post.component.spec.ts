@@ -3,7 +3,7 @@ import { Post } from '../../models/post';
 import { first, of } from 'rxjs';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
-
+import { By } from '@angular/platform-browser';
 
 describe('Post Component', () => {
   let fixture: ComponentFixture<PostComponent>;
@@ -11,14 +11,14 @@ describe('Post Component', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [PostComponent],
-      providers:[
+      providers: [
         {
-          provide:ActivatedRoute,
-          useValue:{
-            params:of({id: 'testID'})
-          }
-        }
-      ]
+          provide: ActivatedRoute,
+          useValue: {
+            params: of({ id: 'testID' }),
+          },
+        },
+      ],
     });
 
     fixture = TestBed.createComponent(PostComponent);
@@ -29,18 +29,25 @@ describe('Post Component', () => {
     expect(comp).toBeDefined();
   });
 
-
-  //Check html elemnts 
+  //Check html elemnts
   it('Should render the title in <a> tag', () => {
-
     const post: Post = { id: 1, title: 'Title01', body: 'testBody1' };
     comp.post = post;
     fixture.detectChanges();
     const postElement: HTMLElement = fixture.nativeElement;
     const a = postElement.querySelector('a');
     expect(a?.textContent).toEqual(post.title);
-
-  })
+  });
+  it('Should render the title in <a> tag using debug element', () => {
+    const post: Post = { id: 1, title: 'Title01', body: 'testBody1' };
+    comp.post = post;
+    fixture.detectChanges();
+    const postDebugElement = fixture.debugElement;
+    const aElemnt: HTMLElement = postDebugElement.query(
+      By.css('a')
+    ).nativeElement;
+    expect(aElemnt.textContent).toContain(post.title);
+  });
 
   it('should raise and event when the delete post is clicked', () => {
     const post: Post = { id: 1, title: 'testTile1', body: 'testBody1' };
