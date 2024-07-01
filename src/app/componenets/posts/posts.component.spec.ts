@@ -3,6 +3,7 @@ import { Post } from '../../models/post';
 import { PostsComponent } from './posts.component';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PostService } from '../../services/Post/post.service';
+import { Component, Input } from '@angular/core';
 
 class mockPostService {
   getPosts() {}
@@ -16,6 +17,15 @@ describe('PostsComponent', () => {
   let component: PostsComponent;
   let mockPostService: any;
   let fixture: ComponentFixture<PostsComponent>;
+
+  @Component({
+    selector: 'app-post',
+    template: '<div></div>',
+  })
+  class FakePostComponent {
+    @Input() post!: Post;
+    
+  }
 
   beforeEach(() => {
     POSTS = [
@@ -52,16 +62,12 @@ describe('PostsComponent', () => {
     component = fixture.componentInstance;
   });
 
-
   it('Should set posts from the service directly', () => {
     mockPostService.getPosts.and.returnValue(of(POSTS));
-    component.ngOnInit(); //fixture.detectChanges(); can use 
-    
+    component.ngOnInit(); //fixture.detectChanges(); can use
+
     expect(component.posts.length).toBe(3);
-  
-  })
-
-
+  });
 
   //Delete method eka test tika 3 scenarrios
 
