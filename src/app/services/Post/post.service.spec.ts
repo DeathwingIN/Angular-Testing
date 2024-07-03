@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { PostService } from './post.service';
 import { of } from 'rxjs';
+import { TestBed } from '@angular/core/testing';
 
 describe('Post Service', () => {
   let postService: PostService;
@@ -24,22 +25,26 @@ describe('Post Service', () => {
   ];
 
   beforeEach(() => {
-    httpCientSpy = jasmine.createSpyObj('HttpClient', ['get']);
+     httpCientSpy = jasmine.createSpyObj('HttpClient', ['get']);
 
-    postService = new PostService(httpCientSpy);
+    TestBed.configureTestingModule({
+      providers: [PostService, { provide: HttpClient, useValue: httpCientSpy }],
+    });
+    postService = TestBed.inject(PostService);
+    httpCientSpy= TestBed.inject(HttpClient) as jasmine.SpyObj<HttpClient>;
   });
 
   describe('getPosts', () => {
     it('Should return exoected posts when getPosts is acalled', () => {
       httpCientSpy.get.and.returnValue(of(POSTS));
       postService.getPosts().subscribe({
-        next:(posts)=>{
-            expect(posts).toEqual(POSTS);
+        next: (posts) => {
+          expect(posts).toEqual(POSTS);
         },
         error: (error) => {
           fail('Expected posts, not error');
-        }
-      })
+        },
+      });
       expect(httpCientSpy.get).toHaveBeenCalledTimes(1);
     });
   });
