@@ -87,8 +87,6 @@ describe('PostsComponent', () => {
         .componentInstance as PostComponent;
       expect(PostComponentInstance.post.title).toEqual(POSTS[i].title);
     }
-
-    
   });
 
   it('Should set posts from the service directly', () => {
@@ -128,6 +126,23 @@ describe('PostsComponent', () => {
     it('should call delete method in post Service one time', () => {
       component.deletePosts(POSTS[1]);
       expect(mockPostService.deletePosts).toHaveBeenCalledTimes(1);
+    });
+
+    it('Should call delete method when post componnent button is delete ', () => {
+      spyOn(component, 'deletePosts');
+      mockPostService.getPosts.and.returnValue(of(POSTS));
+      fixture.detectChanges();
+
+      let postComponentDEs = fixture.debugElement.queryAll(
+        By.directive(PostComponent)
+      );
+
+      for (let i = 0; i < postComponentDEs.length; i++) {
+        postComponentDEs[0]
+          .query(By.css('button'))
+          .triggerEventHandler('click', { preventDefault: () => {} });
+        expect(component.deletePosts).toHaveBeenCalledWith(POSTS[0]);
+      }
     });
   });
 });
